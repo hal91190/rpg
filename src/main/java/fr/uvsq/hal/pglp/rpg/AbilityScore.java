@@ -13,9 +13,15 @@ import static java.lang.Math.floorDiv;
  * @version 2022
  */
 public class AbilityScore implements Comparable<AbilityScore> {
+  /** Valeur minimale d'une caractéristique d'un personnage */
   public static final byte MIN_SCORE = 1;
+
+  /** Valeur maximale d'une caractéristique d'un personnage */
   public static final byte MAX_SCORE = 20;
 
+  private static final String MSG_SCORE_INVALID = "The score is invalid.";
+
+  /** Valeur de la caractéristique */
   private byte score;
 
   /**
@@ -30,25 +36,48 @@ public class AbilityScore implements Comparable<AbilityScore> {
     score = (byte)(values.stream().mapToInt(Integer::intValue).sum() - minValues);
   }
 
-  @Override
-  public String toString() {
-    return Byte.toString(score);
-  }
-
+  /**
+   * Fixe la valeur d'une caractéristique.
+   *
+   * @param score la valeur
+   */
   public AbilityScore(byte score) {
     this.score = score;
+    if (!isValid()) {
+      throw new IllegalArgumentException(MSG_SCORE_INVALID);
+    }
   }
 
+  /**
+   * Vérifie la validité de la valeur.
+   *
+   * @return true si la valeur est acceptable pour un personnage, false sinon
+   */
   public boolean isValid() {
     return score >= MIN_SCORE && score <= MAX_SCORE;
   }
 
+  /**
+   * Retourne la valeur de caractéristiques.
+   *
+   * @return la valeur
+   */
   public byte getScore() {
     return score;
   }
 
+  /**
+   * Retourne le modificateur correspondant.
+   *
+   * @return le modificateur
+   */
   public byte getModifier() {
     return (byte)floorDiv(score - 10, 2);
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%d (%d)", score, getModifier());
   }
 
   @Override
