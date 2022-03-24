@@ -1,5 +1,6 @@
 package fr.uvsq.hal.pglp.rpg;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static fr.uvsq.hal.pglp.rpg.Ability.*;
@@ -7,10 +8,17 @@ import static fr.uvsq.hal.pglp.rpg.CharacterBuilder.predefinedScores;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterBuilderTest {
+  private final int[] expectedRandomAbilitiesScores = { 14, 13, 11, 11, 10, 7 };
+
+  @BeforeEach
+  public void setup() {
+    Dice.setSeed(1L);
+  }
+
   @Test
   public void aCharacterShouldHaveMandatoryAttributes() {
     Character frodon = new CharacterBuilder("Frodon").build();
-    assertCharacter(frodon, "Frodon");
+    assertRandomCharacter(frodon, "Frodon", Ability.values(), expectedRandomAbilitiesScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
   }
 
   @Test
@@ -27,9 +35,9 @@ public class CharacterBuilderTest {
 
   @Test
   public void aCharacterShouldHaveAnOrderOnAbilities() {
-    Ability[] abilitiesOrder = { Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma };
+    Ability[] abilitiesOrder = { Charisma, Wisdom, Intelligence, Constitution, Dexterity, Strength };
     Character frodon = new CharacterBuilder("Frodon", abilitiesOrder).build();
-    assertCharacter(frodon, "Frodon", abilitiesOrder);
+    assertRandomCharacter(frodon, "Frodon", abilitiesOrder, expectedRandomAbilitiesScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
   }
 
   @Test
@@ -48,65 +56,76 @@ public class CharacterBuilderTest {
 
   @Test
   public void aCharacterCouldHaveNonRandomAbilityScores() {
-    Ability[] abilitiesOrder = { Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma };
+    Ability[] abilitiesOrder = { Charisma, Wisdom, Intelligence, Constitution, Dexterity, Strength };
     Character frodon = new CharacterBuilder("Frodon")
       .nonRamdomAbilities(abilitiesOrder)
       .build();
-    assertCharacter(frodon, "Frodon", abilitiesOrder);
-    assertEquals(predefinedScores[0], frodon.get(Strength).getScore());
-    assertEquals(predefinedScores[1], frodon.get(Dexterity).getScore());
-    assertEquals(predefinedScores[2], frodon.get(Constitution).getScore());
-    assertEquals(predefinedScores[3], frodon.get(Intelligence).getScore());
-    assertEquals(predefinedScores[4], frodon.get(Wisdom).getScore());
-    assertEquals(predefinedScores[5], frodon.get(Charisma).getScore());
+    assertCharacter(frodon, "Frodon", abilitiesOrder, predefinedScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
   }
 
   @Test
   public void anAbilityCouldBeDefinedIndividually() {
     Character frodon = new CharacterBuilder("Frodon")
-      .setAbility(Strength, (byte) 20)
+      .setAbility(Strength, 20)
       .build();
     assertEquals(20, frodon.get(Strength).getScore());
+    int[] expectedScores = { 20, 13, 11, 11, 10, 7 };
+    assertCharacter(frodon, "Frodon", Ability.values(), expectedScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
   }
 
   @Test
   public void anOutOfBoundScoreShouldThrowAnException() {
     Exception exception = assertThrows(
       IllegalArgumentException.class,
-      () -> new CharacterBuilder("Frodon").setAbility(Strength, (byte) 30).build());
+      () -> new CharacterBuilder("Frodon").setAbility(Strength, 30).build());
     assertEquals("The score is invalid.", exception.getMessage());
   }
 
   @Test
   public void aCharacterCouldHaveAProficiencyBonus() {
     Character frodon = new CharacterBuilder("Frodon")
-      .setProficiencyBonus((byte) 4)
+      .setProficiencyBonus(4)
       .build();
-    assertEquals(4, frodon.getProficiencyBonus());
+    assertRandomCharacter(frodon, "Frodon", Ability.values(), expectedRandomAbilitiesScores, 4);
   }
 
-  private static void assertCharacter(final Character character, final String expectedName) {
-    assertEquals(expectedName, character.getName());
-    int abilitySum = 0;
-    for (Ability ability : Ability.values()) {
-      AbilityScore abilityScore = character.get(ability);
-      assertTrue(abilityScore.isValid());
-      abilitySum += abilityScore.getScore();
+  private static void assertCharacter(
+    final Character character,
+    final String name,
+    final Ability[] abilitiesOrder,
+    final int[] abilitiesScores,
+    final int proficiencyBonus) {
+    assertEquals(name, character.getName());
+
+    for (int i = 0; i < abilitiesScores.length; i++) {
+      Ability ability = abilitiesOrder[i];
+      int expectedScore = abilitiesScores[i];
+      int abilityScore = character.get(ability).getScore();
+      assertEquals(expectedScore, abilityScore);
     }
-    assertTrue(abilitySum >= CharacterBuilder.MIN_SUM_SCORE && abilitySum <= CharacterBuilder.MAX_SUM_SCORE);
-    assertEquals(CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS, character.getProficiencyBonus());
+
+    assertEquals(proficiencyBonus, character.getProficiencyBonus());
   }
 
-  private static void assertCharacter(final Character character, final String expectedName, final Ability[] abilitiesOrder) {
-    assertCharacter(character, expectedName);
+  private static void assertRandomCharacter(
+    final Character character,
+    final String name,
+    final Ability[] abilitiesOrder,
+    final int[] abilitiesScores,
+    final int proficiencyBonus) {
+    assertCharacter(character, name, abilitiesOrder, abilitiesScores, proficiencyBonus);
 
+    int abilitySum = 0;
     Ability previousAbility = null;
-    for (Ability ability : abilitiesOrder) {
+    for (int i = 0; i < abilitiesScores.length; i++) {
+      Ability ability = abilitiesOrder[i];
+      abilitySum += character.get(ability).getScore();
       if (previousAbility != null) {
         assertTrue(character.get(previousAbility).compareTo(character.get(ability)) >= 0,
           previousAbility + " have to be larger than " + ability);
       }
       previousAbility = ability;
     }
+    assertTrue(abilitySum >= CharacterBuilder.MIN_SUM_SCORE && abilitySum <= CharacterBuilder.MAX_SUM_SCORE);
   }
 }

@@ -21,10 +21,10 @@ public class CharacterBuilder {
   public static final int MAX_SUM_SCORE = 80;
 
   /** Scores prédéfinis de caractéristiques pour la création non aléatoire. */
-  public static final byte[] predefinedScores = { 15, 14, 13, 12, 10, 8 };
+  public static final int[] predefinedScores = { 15, 14, 13, 12, 10, 8 }; // WARNING : ce tableau est modifiable par tout le monde
 
-  /** Bonus de maîtrise au niveau 1 */
-  public static final byte FIRST_LEVEL_PROFICIENCY_BONUS = 2;
+  /** Bonus de maîtrise au niveau 1. */
+  public static final int FIRST_LEVEL_PROFICIENCY_BONUS = 2;
 
   private static final String MSG_NAME_MANDATORY = "A character should have a name.";
   private static final String MSG_NAME_NOT_BLANK = "A character name should not be blank.";
@@ -35,7 +35,7 @@ public class CharacterBuilder {
 
   final String name;
   Map<Ability, AbilityScore> abilities;
-  byte proficiencyBonus;
+  int proficiencyBonus;
 
   /**
    * Crée un personnage en générant les caractéristiques de manière aléatoire.
@@ -141,7 +141,7 @@ public class CharacterBuilder {
    *
    * @return le builder
    */
-  public CharacterBuilder setAbility(Ability ability, byte score) {
+  public CharacterBuilder setAbility(Ability ability, int score) {
     abilities.put(ability, new AbilityScore(score));
     logger.debug("{} : {}", ability, abilities.get(ability));
     return this;
@@ -154,7 +154,7 @@ public class CharacterBuilder {
    *
    * @return le builder
    */
-  public CharacterBuilder setProficiencyBonus(byte proficiencyBonus) {
+  public CharacterBuilder setProficiencyBonus(int proficiencyBonus) {
     this.proficiencyBonus = proficiencyBonus;
     return this;
   }

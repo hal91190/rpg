@@ -7,16 +7,16 @@ package fr.uvsq.hal.pglp.rpg;
  * @version 2022
  */
 public enum Ability {
-  /** Force */
+  /** Force. */
   Strength,
-  /** Dextérité */
+  /** Dextérité. */
   Dexterity,
-  /** Constitution */
+  /** Constitution. */
   Constitution,
-  /** Intelligence */
+  /** Intelligence. */
   Intelligence,
-  /** Sagesse */
+  /** Sagesse. */
   Wisdom,
-  /** Charisme */
+  /** Charisme. */
   Charisma;
 }

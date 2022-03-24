@@ -1,6 +1,11 @@
 package fr.uvsq.hal.pglp.rpg;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
+
+import static fr.uvsq.hal.pglp.rpg.Dice.d20;
 
 /**
  * La classe <code>Character</code> représente un personnage de JdR.
@@ -9,17 +14,19 @@ import java.util.*;
  * @version 2022
  */
 public class Character {
+  private final Logger logger = LoggerFactory.getLogger(Character.class);
+
   //TODO Race
   //TODO Class
 
-  /** Nom */
+  /** Nom. */
   private final String name;
 
-  /** Caractéristiques */
+  /** Caractéristiques. */
   private final Map<Ability, AbilityScore> abilities;
 
-  /** Bonus de maîtrise */
-  private final byte proficiencyBonus;
+  /** Bonus de maîtrise. */
+  private final int proficiencyBonus;
 
   /**
    * Construit un personnage à partir d'un builder.
@@ -57,7 +64,20 @@ public class Character {
    *
    * @return le bonus de maîtrise
    */
-  public byte getProficiencyBonus() {
+  public int getProficiencyBonus() {
     return proficiencyBonus;
+  }
+
+  /**
+   * Réalise un test de caractéristique.
+   *
+   * @param ability la caractéristique impliquée
+   * @param difficultyClass le degré de difficulté du test
+   * @return true si le test est réussi
+   */
+  public boolean abilityCheck(Ability ability, DifficultyClass difficultyClass) {
+    int d20Rolled = d20.roll();
+    logger.info("{} rolled = {}, {} = {}, DC = {} ({})", d20, d20Rolled, ability, get(ability), difficultyClass, difficultyClass.getDifficultyClass());
+    return d20Rolled + get(ability).getModifier() >= difficultyClass.getDifficultyClass();
   }
 }

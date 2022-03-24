@@ -9,41 +9,41 @@ import static fr.uvsq.hal.pglp.rpg.Ability.*;
  * @version 2022
  */
 public enum Skill {
-  /** Athlétisme */
+  /** Athlétisme. */
   Athletics(Strength),
-  /** Acrobaties */
+  /** Acrobaties. */
   Acrobatics(Dexterity),
-  /** Discrétion */
+  /** Discrétion. */
   SleightOfHand(Dexterity),
-  /** Escamotage */
+  /** Escamotage. */
   Stealth(Dexterity),
-  /** Arcanes */
+  /** Arcanes. */
   Arcana(Intelligence),
-  /** Histoire */
+  /** Histoire. */
   History(Intelligence),
-  /** Investigation */
+  /** Investigation. */
   Investigation(Intelligence),
-  /** Nature */
+  /** Nature. */
   Nature(Intelligence),
-  /** Religion */
+  /** Religion. */
   Religion(Intelligence),
-  /** Dressage */
+  /** Dressage. */
   AnimalHandling(Wisdom),
-  /** Intuition */
+  /** Intuition. */
   Insight(Wisdom),
-  /** Médecine */
+  /** Médecine. */
   Medicine(Wisdom),
-  /** Perception */
+  /** Perception. */
   Perception(Wisdom),
-  /** Survie */
+  /** Survie. */
   Survival(Wisdom),
-  /** Tromperie */
+  /** Tromperie. */
   Deception(Charisma),
-  /** Intimidation */
+  /** Intimidation. */
   Intimidation(Charisma),
-  /** Représentation */
+  /** Représentation. */
   Performance(Charisma),
-  /** Persuasion */
+  /** Persuasion. */
   Persuasion(Charisma);
 
   private Ability relatedAbility;
