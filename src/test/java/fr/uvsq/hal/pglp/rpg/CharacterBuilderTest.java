@@ -3,8 +3,12 @@ package fr.uvsq.hal.pglp.rpg;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+
 import static fr.uvsq.hal.pglp.rpg.Ability.*;
 import static fr.uvsq.hal.pglp.rpg.CharacterBuilder.predefinedScores;
+import static fr.uvsq.hal.pglp.rpg.Skill.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterBuilderTest {
@@ -89,6 +93,15 @@ public class CharacterBuilderTest {
     assertRandomCharacter(frodon, "Frodon", Ability.values(), expectedRandomAbilitiesScores, 4);
   }
 
+  @Test
+  public void aCharacterCouldHaveSkills() {
+    Character frodon = new CharacterBuilder("Frodon")
+      .isProficientIn(Acrobatics, Perception)
+      .build();
+    assertRandomCharacter(frodon, "Frodon", Ability.values(), expectedRandomAbilitiesScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
+    assertSkills(frodon, Acrobatics, Perception);
+  }
+
   private static void assertCharacter(
     final Character character,
     final String name,
@@ -127,5 +140,16 @@ public class CharacterBuilderTest {
       previousAbility = ability;
     }
     assertTrue(abilitySum >= CharacterBuilder.MIN_SUM_SCORE && abilitySum <= CharacterBuilder.MAX_SUM_SCORE);
+  }
+
+  private static void assertSkills(final Character character, final Skill... proficientSkills) {
+    EnumSet<Skill> proficientSkillsAsSet = EnumSet.copyOf(Arrays.asList(proficientSkills));
+    for (Skill skill : Skill.values()) {
+      if (proficientSkillsAsSet.contains(skill)) {
+        assertTrue(character.isProficientIn(skill));
+      } else {
+        assertFalse(character.isProficientIn(skill));
+      }
+    }
   }
 }

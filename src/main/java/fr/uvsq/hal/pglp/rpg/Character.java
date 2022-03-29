@@ -28,6 +28,8 @@ public class Character {
   /** Bonus de maîtrise. */
   private final int proficiencyBonus;
 
+  private final Set<Skill> skills;
+
   /**
    * Construit un personnage à partir d'un builder.
    *
@@ -37,6 +39,7 @@ public class Character {
     this.name = builder.name;
     this.abilities = builder.abilities;
     this.proficiencyBonus = builder.proficiencyBonus;
+    this.skills = builder.skills;
   }
 
   /**
@@ -79,5 +82,40 @@ public class Character {
     int d20Rolled = d20.roll();
     logger.info("{} rolled = {}, {} = {}, DC = {} ({})", d20, d20Rolled, ability, get(ability), difficultyClass, difficultyClass.getDifficultyClass());
     return d20Rolled + get(ability).getModifier() >= difficultyClass.getDifficultyClass();
+  }
+
+  /**
+   * Vérifie si le personnage maîtrise la compétence.
+   *
+   * @param skill la compétence
+   * @return true si le personnage maîtrise la compétence, false sinon
+   */
+  public boolean isProficientIn(Skill skill) {
+    return skills.contains(skill);
+  }
+
+  /**
+   * Retourne le bonus de maîtrise spécifique à une compétence.
+   *
+   * @param skill la compétence
+   * @return le bonus
+   */
+  public int getProficiencyBonusIn(Skill skill) {
+    Ability ability = skill.getAbility();
+    int bonus = get(ability).getModifier();
+    return isProficientIn(skill) ? bonus + getProficiencyBonus() : bonus;
+  }
+
+  /**
+   * Réalise un test de compétence.
+   *
+   * @param skill la compétence impliquée
+   * @param difficultyClass le degré de difficulté du test
+   * @return true si le test est réussi
+   */
+  public boolean skillCheck(Skill skill, DifficultyClass difficultyClass) {
+    int d20Rolled = d20.roll();
+    logger.info("{} rolled = {}, {} ({}), DC = {} ({})", d20, d20Rolled, skill, getProficiencyBonusIn(skill), difficultyClass, difficultyClass.getDifficultyClass());
+    return d20Rolled + getProficiencyBonusIn(skill) >= difficultyClass.getDifficultyClass();
   }
 }

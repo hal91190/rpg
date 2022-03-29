@@ -30,12 +30,14 @@ public class CharacterBuilder {
   private static final String MSG_NAME_NOT_BLANK = "A character name should not be blank.";
   private static final String MSG_ORDER_MANDATORY = "The order between abilities have to be defined.";
   private static final String MSG_ORDER_VALID = "The abilities order should mention each ability once and only once.";
+  private static final String MSG_SKILL_MANDATORY = "The skill is mandatory.";
 
   private final Logger logger = LoggerFactory.getLogger(CharacterBuilder.class);
 
   final String name;
   Map<Ability, AbilityScore> abilities;
   int proficiencyBonus;
+  Set<Skill> skills;
 
   /**
    * Crée un personnage en générant les caractéristiques de manière aléatoire.
@@ -80,6 +82,7 @@ public class CharacterBuilder {
           () -> new EnumMap<>(Ability.class)));
 
     this.proficiencyBonus = FIRST_LEVEL_PROFICIENCY_BONUS;
+    this.skills = EnumSet.noneOf(Skill.class);
     logger.debug("{} : {}, {}", this.name, abilities, proficiencyBonus);
   }
 
@@ -156,6 +159,18 @@ public class CharacterBuilder {
    */
   public CharacterBuilder setProficiencyBonus(int proficiencyBonus) {
     this.proficiencyBonus = proficiencyBonus;
+    return this;
+  }
+
+  /**
+   * Indique les compétences que le personnage maîtrise.
+   *
+   * @param skills les compétences
+   * @return le builder
+   */
+  public CharacterBuilder isProficientIn(Skill... skills) {
+    Objects.requireNonNull(skills, MSG_SKILL_MANDATORY);
+    this.skills = EnumSet.copyOf(Arrays.asList(skills));
     return this;
   }
 }

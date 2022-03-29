@@ -13,9 +13,9 @@ public enum Skill {
   Athletics(Strength),
   /** Acrobaties. */
   Acrobatics(Dexterity),
-  /** Discrétion. */
-  SleightOfHand(Dexterity),
   /** Escamotage. */
+  SleightOfHand(Dexterity),
+  /** Discrétion. */
   Stealth(Dexterity),
   /** Arcanes. */
   Arcana(Intelligence),
