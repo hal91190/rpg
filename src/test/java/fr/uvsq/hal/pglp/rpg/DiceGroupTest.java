@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static fr.uvsq.hal.pglp.rpg.Dice.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DiceGroupTest {
   @BeforeEach
@@ -18,6 +19,14 @@ class DiceGroupTest {
     int[] values = twoD20.roll();
     assertEquals(13, values[0]);
     assertEquals(9, values[1]);
+  }
+
+  @Test
+  public void aDiceGroupWithZeroDiceShouldFail() {
+    Exception exception = assertThrows(
+      IllegalArgumentException.class,
+      () -> new DiceGroup.Builder(0, d20).build());
+    assertEquals("The number of dices have to be strictly positive.", exception.getMessage());
   }
 
   @Test
@@ -39,5 +48,22 @@ class DiceGroupTest {
     assertEquals(11, values[7]);
     assertEquals(4, values[8]);
     assertEquals(17, values[9]);
+  }
+
+  @Test
+  public void operationsCanBePerformedOnDiceGroups() {
+    DiceGroup twoD20 = new DiceGroup.Builder(2, d20).build();
+    int value = twoD20.rollnSun();
+    assertEquals(22, value);
+    value = twoD20.rollnMin();
+    assertEquals(1, value);
+    value = twoD20.rollnMax();
+    assertEquals(6, value);
+    value = twoD20.rollnApply(Integer::sum);
+    assertEquals(32, value);
+    value = twoD20.rollnApply(Integer::min);
+    assertEquals(4, value);
+    value = twoD20.rollnApply(Integer::max);
+    assertEquals(12, value);
   }
 }

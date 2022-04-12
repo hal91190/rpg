@@ -7,11 +7,13 @@ import java.util.Arrays;
 import java.util.EnumSet;
 
 import static fr.uvsq.hal.pglp.rpg.Ability.*;
-import static fr.uvsq.hal.pglp.rpg.CharacterBuilder.predefinedScores;
-import static fr.uvsq.hal.pglp.rpg.Skill.*;
+import static fr.uvsq.hal.pglp.rpg.Skill.Acrobatics;
+import static fr.uvsq.hal.pglp.rpg.Skill.Perception;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterBuilderTest {
+  private static final int[] PREDEFINED_SCORES = { 15, 14, 13, 12, 10, 8 };
+
   private final int[] expectedRandomAbilitiesScores = { 14, 13, 11, 11, 10, 7 };
 
   @BeforeEach
@@ -64,7 +66,7 @@ public class CharacterBuilderTest {
     Character frodon = new CharacterBuilder("Frodon")
       .nonRamdomAbilities(abilitiesOrder)
       .build();
-    assertCharacter(frodon, "Frodon", abilitiesOrder, predefinedScores, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
+    assertCharacter(frodon, "Frodon", abilitiesOrder, PREDEFINED_SCORES, CharacterBuilder.FIRST_LEVEL_PROFICIENCY_BONUS);
   }
 
   @Test

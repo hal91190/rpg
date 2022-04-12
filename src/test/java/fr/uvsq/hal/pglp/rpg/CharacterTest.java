@@ -26,17 +26,17 @@ public class CharacterTest {
   public void aCharacterShouldPerformAnAbilityCheck() {
     // Strength = 15 (2)
     // d20 rolled = 13
-    assertTrue(frodon.abilityCheck(Strength, VeryEasy));
+    assertTrue(frodon.checks(Strength, VeryEasy));
     // d20 rolled : 17
-    assertTrue(frodon.abilityCheck(Strength, Easy));
+    assertTrue(frodon.checks(Strength, Easy));
     // d20 rolled : 1
-    assertFalse(frodon.abilityCheck(Strength, Medium));
+    assertFalse(frodon.checks(Strength, Medium));
     // d20 rolled : 19
-    assertTrue(frodon.abilityCheck(Strength, Hard));
+    assertTrue(frodon.checks(Strength, Hard));
     // d20 rolled : 1
-    assertFalse(frodon.abilityCheck(Strength, VeryHard));
+    assertFalse(frodon.checks(Strength, VeryHard));
     // d20 rolled : 10
-    assertFalse(frodon.abilityCheck(Strength, NearlyImpossible));
+    assertFalse(frodon.checks(Strength, NearlyImpossible));
   }
 
   @Test
@@ -49,16 +49,37 @@ public class CharacterTest {
   public void aCharacterShouldPerformASkillCheck() {
     // Dexterity = 14 (2)
     // d20 rolled = 13
-    assertTrue(frodon.skillCheck(Acrobatics, VeryEasy));
+    assertTrue(frodon.checks(Acrobatics, VeryEasy));
     // d20 rolled : 17
-    assertTrue(frodon.skillCheck(Acrobatics, Easy));
+    assertTrue(frodon.checks(Acrobatics, Easy));
     // d20 rolled : 1
-    assertFalse(frodon.skillCheck(Acrobatics, Medium));
+    assertFalse(frodon.checks(Acrobatics, Medium));
     // d20 rolled : 19
-    assertTrue(frodon.skillCheck(Acrobatics, Hard));
+    assertTrue(frodon.checks(Acrobatics, Hard));
     // d20 rolled : 1
-    assertFalse(frodon.skillCheck(Acrobatics, VeryHard));
+    assertFalse(frodon.checks(Acrobatics, VeryHard));
     // d20 rolled : 10
-    assertFalse(frodon.skillCheck(Acrobatics, NearlyImpossible));
+    assertFalse(frodon.checks(Acrobatics, NearlyImpossible));
+  }
+
+  @Test
+  public void aCharacterShouldPerformVariousChecks() {
+    // Dexterity = 14 (2)
+    // d20 rolled = 13
+    assertFalse(frodon.checks(Strength, VeryHard));
+    // d20 rolled : 17
+    // d20 rolled : 1
+    assertTrue(frodon.checks(Strength, VeryEasy, Character.Advantage.Advantage));
+    // d20 rolled : 19
+    // d20 rolled : 1
+    assertFalse(frodon.checks(Strength, Medium, Character.Advantage.Disadvantage));
+    // d20 rolled : 10
+    assertFalse(frodon.checks(Acrobatics, Medium));
+    // d20 rolled : 7
+    // d20 rolled : 15
+    assertFalse(frodon.checks(Acrobatics, Hard, Character.Advantage.Advantage));
+    // d20 rolled : 9
+    // d20 rolled : 17
+    assertFalse(frodon.checks(Acrobatics, NearlyImpossible, Character.Advantage.Disadvantage));
   }
 }

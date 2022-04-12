@@ -21,7 +21,7 @@ public class CharacterBuilder {
   public static final int MAX_SUM_SCORE = 80;
 
   /** Scores prédéfinis de caractéristiques pour la création non aléatoire. */
-  public static final int[] predefinedScores = { 15, 14, 13, 12, 10, 8 }; // WARNING : ce tableau est modifiable par tout le monde
+  private static final int[] PREDEFINED_SCORES = { 15, 14, 13, 12, 10, 8 };
 
   /** Bonus de maîtrise au niveau 1. */
   public static final int FIRST_LEVEL_PROFICIENCY_BONUS = 2;
@@ -121,7 +121,7 @@ public class CharacterBuilder {
   public CharacterBuilder nonRamdomAbilities(Ability[] abilitiesOrder) {
     validateAbilitiesOrder(abilitiesOrder);
     AbilityScore[] abilityScores = new AbilityScore[Ability.values().length];
-    Arrays.setAll(abilityScores, i -> new AbilityScore(predefinedScores[i]));
+    Arrays.setAll(abilityScores, i -> new AbilityScore(PREDEFINED_SCORES[i]));
     Arrays.sort(abilityScores, Comparator.reverseOrder());
     abilities = IntStream
       .range(0, Ability.values().length)

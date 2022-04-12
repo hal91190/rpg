@@ -14,6 +14,9 @@ import static fr.uvsq.hal.pglp.rpg.Dice.d20;
  * @version 2022
  */
 public class Character {
+  /** Avantage ou désavantage pour les tests. */
+  public enum Advantage { Advantage, None, Disadvantage }
+
   private final Logger logger = LoggerFactory.getLogger(Character.class);
 
   //TODO Race
@@ -28,6 +31,7 @@ public class Character {
   /** Bonus de maîtrise. */
   private final int proficiencyBonus;
 
+  /** Compétences. */
   private final Set<Skill> skills;
 
   /**
@@ -72,19 +76,6 @@ public class Character {
   }
 
   /**
-   * Réalise un test de caractéristique.
-   *
-   * @param ability la caractéristique impliquée
-   * @param difficultyClass le degré de difficulté du test
-   * @return true si le test est réussi
-   */
-  public boolean abilityCheck(Ability ability, DifficultyClass difficultyClass) {
-    int d20Rolled = d20.roll();
-    logger.info("{} rolled = {}, {} = {}, DC = {} ({})", d20, d20Rolled, ability, get(ability), difficultyClass, difficultyClass.getDifficultyClass());
-    return d20Rolled + get(ability).getModifier() >= difficultyClass.getDifficultyClass();
-  }
-
-  /**
    * Vérifie si le personnage maîtrise la compétence.
    *
    * @param skill la compétence
@@ -107,15 +98,62 @@ public class Character {
   }
 
   /**
+   * Réalise un test de caractéristique.
+   *
+   * @param ability la caractéristique impliquée
+   * @param difficultyClass le degré de difficulté du test
+   * @return true si le test est réussi
+   */
+  public boolean checks(Ability ability, DifficultyClass difficultyClass) {
+    return check(roll20WithAdvantage(Advantage.None), get(ability).getModifier(), difficultyClass);
+  }
+
+  /**
+   * Réalise un test de caractéristique avec avantage/désavantage.
+   *
+   * @param ability la caractéristique impliquée
+   * @param difficultyClass le degré de difficulté du test
+   * @param advantage avantage ou désavantage
+   * @return true si le test est réussi
+   */
+  public boolean checks(Ability ability, DifficultyClass difficultyClass, Advantage advantage) {
+    return check(roll20WithAdvantage(advantage), get(ability).getModifier(), difficultyClass);
+  }
+
+  /**
    * Réalise un test de compétence.
    *
    * @param skill la compétence impliquée
    * @param difficultyClass le degré de difficulté du test
    * @return true si le test est réussi
    */
-  public boolean skillCheck(Skill skill, DifficultyClass difficultyClass) {
-    int d20Rolled = d20.roll();
-    logger.info("{} rolled = {}, {} ({}), DC = {} ({})", d20, d20Rolled, skill, getProficiencyBonusIn(skill), difficultyClass, difficultyClass.getDifficultyClass());
-    return d20Rolled + getProficiencyBonusIn(skill) >= difficultyClass.getDifficultyClass();
+  public boolean checks(Skill skill, DifficultyClass difficultyClass) {
+    return check(roll20WithAdvantage(Advantage.None), getProficiencyBonusIn(skill), difficultyClass);
+  }
+
+  /**
+   * Réalise un test de compétence avec avantage/désavantage.
+   *
+   * @param skill la compétence impliquée
+   * @param difficultyClass le degré de difficulté du test
+   * @param advantage avantage ou désavantage
+   * @return true si le test est réussi
+   */
+  public boolean checks(Skill skill, DifficultyClass difficultyClass, Advantage advantage) {
+    return check(roll20WithAdvantage(advantage), getProficiencyBonusIn(skill), difficultyClass);
+  }
+
+  private boolean check(final int d20Rolled, int modifier, DifficultyClass difficultyClass) {
+    logger.info("{} rolled = {}, modifier = {} , DC = {} ({})",
+      d20, d20Rolled, modifier, difficultyClass, difficultyClass.getDifficultyClass());
+    return d20Rolled + modifier >= difficultyClass.getDifficultyClass();
+  }
+
+  private int roll20WithAdvantage(final Advantage advantage) {
+    return switch (advantage) {
+      case Advantage -> new DiceGroup.Builder(2, d20).build().rollnMax();
+      case None -> d20.roll();
+      case Disadvantage -> new DiceGroup.Builder(2, d20).build().rollnMin();
+    };
   }
 }
